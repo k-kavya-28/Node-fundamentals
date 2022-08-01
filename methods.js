@@ -1,8 +1,9 @@
 const express = require("express");
+const path = require('path');
 
 const app = express();
 //middleware func-> post, front->json
-app.use(express.json());
+app.use(express.json()); //global middleware
 
 app.listen(3000,()=>console.log("server started"))
 
@@ -27,12 +28,14 @@ let user=[
 
 //mini app
 const userRouter=express.Router();
+const authRouter=express.Router();
 //base route, router to use
 app.use('/user',userRouter);
+app.use('/auth',authRouter);
 
 userRouter
 .route('/')
-.get(getUser)
+.get(getUser) //path specific middleware
 .post(postUser)
 .patch(updateUser)
 .delete(deleteUser);
@@ -41,6 +44,10 @@ userRouter
 .route('/:id')
 .get(getUserById);
 
+authRouter
+.route('/signup')
+.get(middleware1,getSignUp,middleware2)
+.post(postSignUp)
 
 
 function getUser(req,res){
@@ -88,6 +95,33 @@ function getUserById(req,res){
         message:"req received",
         data:obj
     })
+}
+
+function middleware1 (req,res,next){
+    console.log('middleware1 encountered');
+    next();
+}
+
+function middleware2 (req,res,next){
+    console.log('middleware2 encountered');
+    // next();
+    console.log("middleware 2 ended req/res cycle");
+    res.sendFile('/public/index.html',{root:__dirname});
+}
+
+function getSignUp(req,res){
+    console.log('getUser called');
+    next();
+    // res.sendFile(path.join(__dirname,"./public/","index.html"));
+}
+
+function postSignUp(req,res){
+    let obj = req.body;
+    console.log('backend',obj);
+    res.json({
+        message:"user signed up",
+        data:obj
+    });
 }
 
 //params
