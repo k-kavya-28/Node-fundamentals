@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require('path');
+const mongoose = require('mongoose');
 
 const app = express();
 //middleware func-> post, front->json
@@ -7,24 +8,24 @@ app.use(express.json()); //global middleware
 
 app.listen(3000,()=>console.log("server started"))
 
-let user=[
-    {
-        'id':1,
-        'name':"Khushi"
-    },
-    {
-        'id':2,
-        'name':"Gunjan"
-    },
-    {
-        'id':3,
-        'name':"Jassika"
-    },
-    {
-        'id':4,
-        'name':"Anand"
-    }
-];
+// let user=[
+//     {
+//         'id':1,
+//         'name':"Khushi"
+//     },
+//     {
+//         'id':2,
+//         'name':"Gunjan"
+//     },
+//     {
+//         'id':3,
+//         'name':"Jassika"
+//     },
+//     {
+//         'id':4,
+//         'name':"Anand"
+//     }
+// ];
 
 //mini app
 const userRouter=express.Router();
@@ -35,7 +36,7 @@ app.use('/auth',authRouter);
 
 userRouter
 .route('/')
-.get(getUser) //path specific middleware
+.get(getUsers) //path specific middleware
 .post(postUser)
 .patch(updateUser)
 .delete(deleteUser);
@@ -50,7 +51,9 @@ authRouter
 .post(postSignUp)
 
 
-function getUser(req,res){
+function getUsers(req,res){
+    //console.log(req.query);
+    //res.send(users);
     res.json(user);
 };
 
@@ -124,6 +127,7 @@ function postSignUp(req,res){
     });
 }
 
+
 //params
 // app.get('/user/:id',(req,res)=>{
 //     console.log(req.params.id);
@@ -139,3 +143,56 @@ function postSignUp(req,res){
 // })
 //params: we won't make different profile for each user
 //queries: to filter out data , you select->goes to url->database->filtering ->data given to user
+
+//db is connected to the application
+
+
+const db_link='mongodb+srv://admin:aHYzIBHbeEeCcNWX@cluster0.ihowjh3.mongodb.net/?retryWrites=true&w=majority';
+mongoose.connect(db_link)
+//.then means promise based
+.then(function(db){
+    // console.log(db)
+    console.log('db connected');
+})
+.catch(function(err){
+    console.log(err);
+});
+
+const userSchema = mongoose.Schema({
+    name:{
+        type:String,
+        required:true
+    },
+    email:{
+        type:String,
+        required:true,
+        unique:true
+    },
+    password:{
+        type:String,
+        required:true,
+        minLength:8
+    },
+    confirmPassword:{
+        type:String,
+        required:true,
+        minLength:8
+    }
+});
+
+//model
+const userModel = mongoose.model('userModel',userSchema);
+
+(async function createUser(){
+    let user = {
+        name:'ks',
+        email:'ks@gmail.com',
+        password:'123456',
+        confirmPassword:'123456'
+    };
+    let data = await userModel.create(user);
+    console.log(data);
+})();
+// to invoke immediately
+
+//mongoose helps in validation and schema designing
