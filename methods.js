@@ -51,10 +51,13 @@ authRouter
 .post(postSignUp)
 
 
-function getUsers(req,res){
+async function getUsers(req,res){
     //console.log(req.query);
     //res.send(users);
-    res.json(user);
+    // let allUsers = await userModel.find();
+    let user = await userModel.findOne({name:'Khushi Kavya'});
+    res.json({message:'list of all users',
+    data:allUsers});
 };
 
 function postUser(req,res){
@@ -66,22 +69,28 @@ function postUser(req,res){
     });
 };
 
-function updateUser(req,res){
+async function updateUser(req,res){
     console.log('req.body-> ',req.body);
     //update data in users obj
     let dataToBeUpdated=req.body;
-    for(key in dataToBeUpdated){
-        user[key]=dataToBeUpdated[key];
-    }
+    let user = await userModel.findOneAndUpdate({email:'ks@gmail.com'},dataToBeUpdated);
+    // for(key in dataToBeUpdated){
+    //     user[key]=dataToBeUpdated[key];
+    // }
     res.json({
-        message:"data updated successfully"
+        message:"data updated successfully",
+        data:user
     })
 };
 
-function deleteUser(req,res){
-    user={};
+async function deleteUser(req,res){
+    // user={};
+    // let user = await userModel.findOneAndDelete({email:'nic@gmail.com'});
+    let dataToBeDeleted = req.body;
+    let user = await userModel.findOneAndDelete(dataToBeDeleted);
     res.json({
-        message:"data has been deleted"
+        message:"data has been deleted",
+        data:user
     });
 };
 
@@ -118,12 +127,14 @@ function getSignUp(req,res){
     // res.sendFile(path.join(__dirname,"./public/","index.html"));
 }
 
-function postSignUp(req,res){
-    let obj = req.body;
-    console.log('backend',obj);
+async function postSignUp(req,res){
+    let dataObj = req.body;
+    let user = await userModel.create(dataObj);
+    // console.log('backend',obj);
+    console.log('backend',user);
     res.json({
         message:"user signed up",
-        data:obj
+        data:user
     });
 }
 
@@ -180,19 +191,27 @@ const userSchema = mongoose.Schema({
     }
 });
 
+userSchema.pre('save',function(){
+    console.log('before saving in db');
+});
+
+userSchema.pre('save',function(){
+    console.log('before saving in db');
+});
+
 //model
 const userModel = mongoose.model('userModel',userSchema);
 
-(async function createUser(){
-    let user = {
-        name:'ks',
-        email:'ks@gmail.com',
-        password:'123456',
-        confirmPassword:'123456'
-    };
-    let data = await userModel.create(user);
-    console.log(data);
-})();
+// (async function createUser(){
+//     let user = {
+//         name:'ks',
+//         email:'ks@gmail.com',
+//         password:'12345678',
+//         confirmPassword:'12345678'
+//     };
+//     let data = await userModel.create(user);
+//     console.log(data);
+// })();
 // to invoke immediately
 
 //mongoose helps in validation and schema designing
