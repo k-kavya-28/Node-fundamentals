@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require('path');
 const mongoose = require('mongoose');
+const emailValidator = require('email-validator');
 
 const app = express();
 //middleware func-> post, front->json
@@ -131,7 +132,7 @@ async function postSignUp(req,res){
     let dataObj = req.body;
     let user = await userModel.create(dataObj);
     // console.log('backend',obj);
-    console.log('backend',user);
+    // console.log('backend',user);
     res.json({
         message:"user signed up",
         data:user
@@ -177,7 +178,10 @@ const userSchema = mongoose.Schema({
     email:{
         type:String,
         required:true,
-        unique:true
+        unique:true,
+        validate:function(){
+            return emailValidator.validate(this.email);
+        }
     },
     password:{
         type:String,
@@ -187,17 +191,27 @@ const userSchema = mongoose.Schema({
     confirmPassword:{
         type:String,
         required:true,
-        minLength:8
+        minLength:8,
+        validate:function(){
+            return this.confirmPassword==this.password
+        }
     }
 });
 
-userSchema.pre('save',function(){
-    console.log('before saving in db');
-});
 
-userSchema.pre('save',function(){
-    console.log('before saving in db');
-});
+//pre post hooks (save is a functionality)
+//after event save occurs in db
+// userSchema.post('save',function(doc){
+//     console.log('after saving in db',doc);
+// });
+
+//before event save occurs in db
+// userSchema.pre('save',function(){
+//     console.log('before saving in db',this);
+// });
+
+//remove -- explore on own
+
 
 //model
 const userModel = mongoose.model('userModel',userSchema);
