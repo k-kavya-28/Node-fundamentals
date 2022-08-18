@@ -213,6 +213,14 @@ const userSchema = mongoose.Schema({
 //remove -- explore on own
 
 
+
+userSchema.pre('save',function(){
+    this.confirmPassword=undefined;
+});
+// As the confirm password is undefined it won't get stored in the database
+
+
+
 //model
 const userModel = mongoose.model('userModel',userSchema);
 
