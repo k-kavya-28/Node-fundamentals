@@ -2,12 +2,14 @@ const express = require("express");
 const path = require('path');
 const bcrypt = require('bcrypt');
 const userModel = require('./foodApp/models/userModel');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 //middleware func-> post, front->json
 app.use(express.json()); //global middleware
 
 app.listen(3000,()=>console.log("server started"))
+app.use(cookieParser());
 
 // let user=[
 //     {
@@ -41,6 +43,14 @@ userRouter
 .post(postUser)
 .patch(updateUser)
 .delete(deleteUser);
+
+userRouter
+.route("/getCookies")
+.get(getCookies);
+
+userRouter
+.route("/setCookies")
+.get(setCookies);
 
 userRouter
 .route('/:id')
@@ -137,6 +147,23 @@ async function postSignUp(req,res){
         message:"user signed up",
         data:user
     });
+}
+
+
+function setCookies(req,res){
+    // res.setHeader('Set-Cookie','isLoggedIn=true'); //isLoggedIn=true is the key-value pair i.e. cookie name and value
+    // res.cookie('isLoggedIn',false);
+    res.cookie('isLoggedIn',true,{maxAge:1000*60*60*24, secure:true, httpOnly:true});
+    res.cookie('isPrimeMember',true);
+    res.send('Cookies has been set');
+}
+//expires-session-until the tab is closed
+
+function getCookies(req,res){
+    // let cookies = req.cookies;
+    let cookies = req.cookies.isLoggedIn;
+    console.log(cookies);
+    res.send('cookies received');
 }
 
 
