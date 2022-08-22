@@ -65,13 +65,13 @@ userSchema.pre('save',function(){
 // As the confirm password is undefined it won't get stored in the database
 
 
-userSchema.pre('save',async function(){
-    let salt = await bcrypt.genSalt();
-    let hashedString = await bcrypt.hash(this.password,salt);
-    // let hashedString = await bcrypt.hash(this.password,10);
-    // console.log(hashedString);
-    this.password = hashedString;
-});
+// userSchema.pre('save',async function(){
+//     let salt = await bcrypt.genSalt();
+//     let hashedString = await bcrypt.hash(this.password,salt);
+//     comment inside comment -> let hashedString = await bcrypt.hash(this.password,10);
+//     comment inside comment -> console.log(hashedString);
+//     this.password = hashedString;
+// });
 //bcrypt functions are asynchronous
 
 
