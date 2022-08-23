@@ -1,11 +1,12 @@
 const express = require("express");
 const userRouter=express.Router();
 const userModel = require('../models/userModel');
+const protectRoute = require('./authHelper')
 
 
 userRouter
 .route('/')
-.get(getUsers) //path specific middleware
+.get(protectRoute,getUsers) //path specific middleware
 .post(postUser)
 .patch(updateUser)
 .delete(deleteUser);
@@ -24,10 +25,10 @@ userRouter
 
 
 async function getUsers(req,res){
-    //console.log(req.query);
-    //res.send(users);
-    // let allUsers = await userModel.find();
-    let user = await userModel.findOne({name:'Khushi Kavya'});
+    // comment inside comment -> console.log(req.query);
+    // comment inside comment -> res.send(users);
+    let allUsers = await userModel.find();
+    // let user = await userModel.findOne({name:'Khushi Kavya'});
     res.json({message:'list of all users',
     data:allUsers});
 };
@@ -97,5 +98,7 @@ function getCookies(req,res){
     console.log(cookies);
     res.send('cookies received');
 }
+
+
 
 module.exports=userRouter;

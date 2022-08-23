@@ -51,6 +51,7 @@ async function loginUser(req,res){
                 //bcrypt -> compare
                 //we'll do it later that's why we are commenting the salt part in the userModel.js file
                 if(user.password==data.password){
+                    res.cookie('isLoggedIn',true,{httpOnly:true});
                     return res.json({
                         message:'User has logged in',
                         userDetails:data
