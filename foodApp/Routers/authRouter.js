@@ -1,6 +1,8 @@
 const express = require("express");
 const authRouter = express.Router();
 const userModel = require('../models/userModel');
+const jwt = require('jsonwebtoken');
+const JWT_KEY = require('secrets.js');
 
 authRouter
 .route('/signup')
@@ -51,7 +53,10 @@ async function loginUser(req,res){
                 //bcrypt -> compare
                 //we'll do it later that's why we are commenting the salt part in the userModel.js file
                 if(user.password==data.password){
-                    res.cookie('isLoggedIn',true,{httpOnly:true});
+                    let uid = user['_id']; //payload-uid
+                    let token = jwt.sign({payload:uid},JWT_KEY); //default HMAC algo will be used otherwise we will be having to specify it, can refer npm jsonwebtoken for it
+                    // res.cookie('isLoggedIn',true,{httpOnly:true});
+                    res.cookie('login',token,{httpOnly:true});
                     return res.json({
                         message:'User has logged in',
                         userDetails:data
