@@ -1,27 +1,58 @@
 const express = require("express");
 const userRouter=express.Router();
 const protectRoute = require('./authHelper');
-const {getUsers, getUserById, postUser, updateUser, deleteUser}=require('../controller/userController');
+// const {getUsers, getUserById, postUser, updateUser, deleteUser}=require('../controller/userController');
+const {getUser, getAllUser, updateUser, deleteUser}=require('../controller/userController');
+const { application } = require("express");
 
-
-userRouter
-.route('/')
-.get(protectRoute,getUsers) //path specific middleware
-.post(postUser)
+//user ke pas options
+userRouter.route('/:id')
 .patch(updateUser)
-.delete(deleteUser);
+.delete(deleteUser)
 
-userRouter
-.route("/getCookies")
-.get(getCookies);
 
+//profile page
+app.use(protectRoute);
 userRouter
-.route("/setCookies")
-.get(setCookies);
+.route('/userProfile')
+.get(getUser)
 
+
+
+//admin specific func
+application.use(isAuthorised(['admin']));
 userRouter
-.route('/:id')
-.get(getUserById); 
+.route('')
+.get(getAllUsers)
+
+
+
+
+
+
+
+
+
+
+
+// userRouter
+// .route('/')
+// .get(protectRoute,getUsers) //path specific middleware
+// .post(postUser)
+// .patch(updateUser)
+// .delete(deleteUser);
+
+// userRouter
+// .route("/getCookies")
+// .get(getCookies);
+
+// userRouter
+// .route("/setCookies")
+// .get(setCookies);
+
+// userRouter
+// .route('/:id')
+// .get(getUserById); 
 
 
 
